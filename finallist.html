@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container wrapper">
+        <form id="addTodoForm">
+            <div class="form-group">
+                <label for="addTodo">Todo List</label>
+                <input type="text" id="addTodo" name="todo" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Todo</button>
+            <button onclick="myFunction()">Edit</button>
+            
+        </form>
+
+        <div class="container wrapper">
+            
+            <p id="demo"></p>
+        </div>
+
+        <ul id="ul" class="list-group mt-3">
+        
+        </ul>
+        
+    </div>
+
+    
+      
+</body>
+<script>
+    var list = [];
+    var addtodo = document.querySelector("#addTodoForm");
+    var form = document.querySelector(".form-group");
+
+    function createListItem(todovalue, todoindex) {
+        var li = document.createElement("li");
+        li.setAttribute("class", "list-group-item d-flex justify-content-between");
+
+
+        if (list[todoindex].completed) {
+            li.classlist.add("bg-secondary");
+        }
+
+        li.addEventListener("click", function () {
+    if (list[todoindex].completed) {
+      // Remove bg-secondary from Li
+      li.classList.remove("bg-secondary");
+      // set Completed to false
+      list[todoindex].completed = false;
+    } else {
+      // add bg-secondary to Li
+      li.classList.add("bg-secondary");
+      // set completed true
+      list[todoindex].completed = true;
+    }
+
+    localStorage.setItem("list", JSON.stringify(list));
+  });
+
+        // create Span
+        var span = document.createElement("span");
+        span.innerHTML = todovalue;
+
+        // Create Icon
+        var icon = document.createElement("i");
+        icon.setAttribute("class", "fas fa-trash-alt");
+        icon.addEventListener("click", function (event) {
+            event.stopPropagation();
+            event.target.parentElement.remove();
+            list.splice(todoindex, 1);
+            localStorage.setItem("list", JSON.stringify(list));
+        });
+
+        li.appendChild(span);
+        li.appendChild(icon);
+
+        return li;
+    };
+
+    function renderTodos(list) {
+  list.forEach(function (todo, index) {
+    var li = createListItem(todo.value, index, todo.completed);
+    form.appendChild(li);
+  });
+}
+
+    addtodo.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var todovalue = addtodo.todo.value;
+
+        list.push({
+            value: todovalue,
+            completed: false,
+        });
+
+        addtodo.todo.value = "";
+
+        localStorage.setItem("list", JSON.stringify(list));
+
+        var li = createListItem(todovalue, list.length - 1);
+        document.getElementById("ul").appendChild(li);
+    });
+
+    function myFunction() {
+  var txt;
+  var person = prompt("Please enter your name:", "Harry Potter");
+  if (person == null || person == "") {
+    txt = "User cancelled the prompt.";
+  } else {
+    txt = person + "! Thankyou?";
+  }
+  document.getElementById("demo").innerHTML = txt;
+}
+</script>
